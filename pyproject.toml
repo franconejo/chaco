@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "chaco"
+version = "0.1.0"
+description = "Motor de simulación de la novela visual de vida cotidiana durante la Guerra del Chaco"
+requires-python = ">=3.12"
+
+[tool.setuptools]
+packages = ["engine", "api", "api.routers"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+exclude = [".venv", "renpy"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.per-file-ignores]
+# FastAPI usa Depends/Header en los defaults por diseño del framework.
+"api/routers/*.py" = ["B008"]

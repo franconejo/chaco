@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chaco — vida cotidiana en la guerra</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">CHACO</span>
+      <span class="brand-sub">novela visual · 1932–1935</span>
+    </div>
+    <div class="game-controls">
+      <input id="game-id-input" placeholder="id de partida" />
+      <button id="btn-load" class="btn btn-ghost">Cargar</button>
+      <button id="btn-new" class="btn btn-primary">Nueva partida</button>
+      <button id="btn-demo" class="btn btn-ghost" title="Crea una partida con semilla 7">Demo</button>
+      <button id="btn-export" class="btn btn-ghost" title="Exportar partida">Exportar</button>
+      <label class="btn btn-ghost" style="cursor:pointer;">
+        Importar
+        <input type="file" id="file-import" accept=".json" style="display:none;" />
+      </label>
+    </div>
+    <select id="lang-select" class="btn btn-ghost" style="padding:4px 8px;">
+      <option value="es">ES</option>
+      <option value="gn">GN</option>
+    </select>
+    <select id="diff-select" class="btn btn-ghost" style="padding:4px 8px;">
+      <option value="0">Fácil</option>
+      <option value="1" selected>Normal</option>
+      <option value="2">Difícil</option>
+    </select>
+    <button id="btn-contrast" class="btn btn-ghost" title="Alto contraste">◐</button>
+    <div id="clock-chip" class="chip chip-clock">—</div>
+  </header>
+
+  <main class="layout">
+    <!-- Columna izquierda: estado del personaje -->
+    <aside class="col col-left">
+      <section class="panel">
+        <h2>Reloj</h2>
+        <div id="clock" class="clock-block">
+          <div class="clock-time">—</div>
+          <div class="clock-date">—</div>
+          <div class="clock-period">—</div>
+        </div>
+        <div class="pa-row">
+          <span>PA</span>
+          <div class="pa-bar"><div id="pa-fill" class="pa-fill"></div></div>
+          <span id="pa-text">0 / 24</span>
+        </div>
+        <div class="stat-row"><span>Día cerrado</span><span id="closed-days">0</span></div>
+        <div class="stat-row"><span>Lugar</span><span id="location-label">—</span></div>
+      </section>
+
+      <section class="panel">
+        <h2>Necesidades</h2>
+        <div id="needs" class="bars"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Atributos</h2>
+        <div id="attrs" class="bars attrs"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Identidad</h2>
+        <div class="stat-row"><span>Sospecha</span><span id="suspicion">0</span></div>
+        <div class="stat-row"><span>Credibilidad</span><span id="credibility">100</span></div>
+        <div class="stat-row"><span>Dinero</span><span id="money">$0</span></div>
+      </section>
+    </aside>
+
+    <!-- Columna central: juego -->
+    <section class="col col-center">
+      <section class="panel collapsible" id="panel-map">
+        <h2>Un pueblo lejos de la guerra <button class="toggle-btn" data-toggle="map">▾</button></h2>
+        <div id="map" class="map-container collapsible-body"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Quién está acá</h2>
+        <div id="npcs-here" class="npcs-here">—</div>
+      </section>
+
+      <section class="panel">
+        <h2>Acciones rápidas</h2>
+        <div class="quick-actions">
+          <button class="btn btn-action" data-action="eat">Comer</button>
+          <button class="btn btn-action" data-action="drink">Beber</button>
+          <button class="btn btn-action" data-action="sleep">Dormir…</button>
+          <button class="btn btn-action" data-action="wait">Esperar…</button>
+          <button class="btn btn-action" data-action="buscar_agua">Buscar agua</button>
+          <button class="btn btn-action" data-action="banarse">Bañarse</button>
+          <button class="btn btn-action" data-action="descansar">Descansar</button>
+          <button class="btn btn-action" data-action="caminar">Caminar</button>
+          <button class="btn btn-action" data-action="entrenar">Entrenar</button>
+          <button class="btn btn-action" data-action="estudiar">Estudiar</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Actividades disponibles</h2>
+        <div id="activities" class="activities"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Registro del día</h2>
+        <div id="log" class="log"></div>
+      </section>
+    </section>
+
+    <!-- Columna derecha: inventario, tienda, NPC -->
+    <aside class="col col-right">
+      <section class="panel">
+        <h2>Inventario <span class="muted" id="weight">0 kg</span></h2>
+        <div id="inventory" class="inventory"></div>
+      </section>
+
+      <section class="panel collapsible" id="panel-shop">
+        <h2>Almacén <span class="muted" id="shop-mult"></span> <button class="toggle-btn" data-toggle="shop">▾</button></h2>
+        <div id="shop" class="shop collapsible-body"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Personajes</h2>
+        <div id="npcs" class="npcs"></div>
+      </section>
+    </aside>
+  </main>
+
+  <!-- Modal de escena pendiente -->
+  <div id="scene-modal" class="modal hidden">
+    <div class="modal-card">
+      <h2 id="scene-title">—</h2>
+      <p id="scene-text" class="scene-text"></p>
+      <div id="scene-cost" class="scene-cost"></div>
+      <div id="scene-choices" class="scene-choices"></div>
+    </div>
+  </div>
+
+  <!-- Modal de horas -->
+  <div id="hours-modal" class="modal hidden">
+    <div class="modal-card modal-small">
+      <h2 id="hours-title">Horas</h2>
+      <input id="hours-input" type="number" min="1" max="12" value="3" />
+      <div class="modal-actions">
+        <button id="hours-cancel" class="btn btn-ghost">Cancelar</button>
+        <button id="hours-ok" class="btn btn-primary">Aceptar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="/app.js"></script>
+</body>
+</html>

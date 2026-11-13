@@ -1,0 +1,33 @@
+﻿I'm sorry, but an uncaught exception occurred.
+
+While running game code:
+  File "game/script.rpy", line 115, in script
+    $ api_client.create_game(7, "create")
+  File "game/script.rpy", line 115, in <module>
+    $ api_client.create_game(7, "create")
+      ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+AttributeError: module 'renpy' has no attribute 'invoke_in_thread'
+
+-- Full Traceback ------------------------------------------------------------
+
+Traceback (most recent call last):
+  File "game/script.rpy", line 115, in script
+    $ api_client.create_game(7, "create")
+  File "renpy/ast.py", line 1193, in execute
+    renpy.python.py_exec_bytecode(self.code.bytecode, self.hide, store=self.store)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "renpy/python.py", line 1276, in py_exec_bytecode
+    exec(bytecode, globals, locals)
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "game/script.rpy", line 115, in <module>
+    $ api_client.create_game(7, "create")
+      ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "api_client.py", line 79, in create_game
+    renpy.invoke_in_thread(worker)  # type: ignore[name-defined]
+    ^^^^^^^^^^^^^^^^^^^^^^                                      
+AttributeError: module 'renpy' has no attribute 'invoke_in_thread'
+
+Windows-11-10.0.26200-SP0 AMD64
+Ren'Py 8.5.3.26051504
+Chaco 0.3.0
+Fri Nov 13 13:15:52 2026

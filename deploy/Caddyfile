@@ -1,0 +1,21 @@
+# Caddyfile para demo.eibrapp.com.py
+# Caddy maneja SSL automáticamente con Let's Encrypt.
+
+demo.eibrapp.com.py {
+    reverse_proxy localhost:8010
+
+    # Compresión
+    encode gzip
+
+    # Headers de seguridad
+    header {
+        X-Frame-Options "SAMEORIGIN"
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy "strict-origin-when-cross-origin"
+    }
+
+    # Logs
+    log {
+        output file /var/log/caddy/demo.log
+    }
+}

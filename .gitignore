@@ -1,0 +1,29 @@
+﻿# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.ruff_cache/
+
+# Docker
+pgdata/
+
+# Ren'Py generated
+renpy/game/cache/
+renpy/game/saves/
+renpy/game/__pycache__/
+*.rpyc
+*.rpymc
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Secrets
+.env
+*.env.local

@@ -177,8 +177,8 @@ label game_loop:
             $ show_result(do("activity", {"activity": "buscar_agua"}))
         "Bañarse":
             $ show_result(do("activity", {"activity": "banarse"}))
-        "Descansar":
-            $ show_result(do("activity", {"activity": "descansar"}))
+        "Pedir comida":
+            $ show_result(do("activity", {"activity": "pedir_comida"}))
         "Caminar":
             $ show_result(do("activity", {"activity": "caminar"}))
         "Estudiar":

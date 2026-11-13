@@ -57,5 +57,6 @@
   "save_slot": "Guardar en slot",
   "load_slot": "Cargar slot",
   "day": "día",
-  "weight": "kg"
+  "weight": "kg",
+  "beg_food": "Pedir comida"
 }

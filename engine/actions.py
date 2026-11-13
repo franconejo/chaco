@@ -391,6 +391,8 @@ def do_activity(state: GameState, activity_id: str, params: dict) -> ActionResul
         return buy(state, _str(params.get("item")) or "", _qty(params))
     if actividad.kind == "visit":
         return visit(state, _str(params.get("npc")) or "")
+    if actividad.kind == "beg":
+        return pedir_comida(state)
 
     puede, motivo = activity_runtime.can_start(state, actividad)
     if not puede:
@@ -472,6 +474,56 @@ def buy(state: GameState, item_id: str, qty: int = 1) -> ActionResult:
         days_closed=cerrados,
     )
 
+
+def pedir_comida(state: GameState) -> ActionResult:
+    from data.items import ITEMS
+    from engine.rng import GameRandom
+
+    actividad = activity_runtime.by_id("pedir_comida")
+    if actividad is not None:
+        puede, motivo = activity_runtime.can_start(state, actividad)
+        if not puede:
+            raise EngineError("no_disponible", motivo or "No podés pedir comida ahora.")
+
+    _begin(state, "plaza")
+
+    before = state.pa
+    _spend(state, 1)
+
+    # Comida aleatoria de vencimiento corto (1 día).
+    rng = GameRandom(state.seed)
+    dia = _day(state)
+    opciones_comida = ["chipa", "pan"]
+    elegida = rng.choice(opciones_comida, "pedir_comida", dia, state.clock_min)
+    cantidad = rng.randint(1, 2, "pedir_comida_cantidad", dia, state.clock_min)
+    # Agregar como pila separada con vencimiento de 1 día.
+    from engine.inventory import Stack
+
+    state.inventory.append(Stack(item_id=elegida, qty=cantidad, expires_day=dia + 1))
+
+    # Efectos de reputación/credibilidad/sospecha
+    cambios = effects.apply(state, actividad.effects if actividad else {
+        "attributes": {"reputation": -3},
+        "credibility": -2,
+        "suspicion": 3,
+    })
+
+    cerrados = state.advance(60, exertion=0.6)
+
+    item = ITEMS[elegida]
+    mensajes = [f"Pediste comida en la plaza: te dieron {cantidad} × {item.name}."]
+    mensajes.append("Te miran mal. La reputación baja.")
+    mensajes.extend(registro["message"] for registro in cerrados)
+
+    return _finish(
+        state,
+        ACTIVITY,
+        60,
+        before,
+        mensajes,
+        deltas={"item": elegida, "qty": cantidad, **{k: v for k, v in cambios.items()}},
+        days_closed=cerrados,
+    )
 
 def visit(state: GameState, npc_id: str) -> ActionResult:
     npc = npc_catalog.NPCS.get(npc_id)

@@ -27,3 +27,10 @@ Thumbs.db
 # Secrets
 .env
 *.env.local
+# Ren'Py
+renpy/game/cache/
+renpy/game/saves/
+renpy/game/__pycache__/
+renpy/log.txt
+*.rpyc
+*.rpymc

@@ -354,7 +354,7 @@ document.addEventListener("click", (e) => {
   else if (a === "wait") openHours("Esperar (horas)", (h) => doAction("wait", { hours: h }, "wait"));
   else if (a === "buscar_agua") doAction("activity", { activity: "buscar_agua" }, "ba");
   else if (a === "banarse") doAction("activity", { activity: "banarse" }, "bn");
-  else if (a === "descansar") doAction("activity", { activity: "descansar" }, "dc");
+  else if (a === "pedir_comida") doAction("activity", { activity: "pedir_comida" }, "pc");
   else if (a === "caminar") doAction("activity", { activity: "caminar" }, "cm");
   else if (a === "entrenar") doAction("activity", { activity: "entrenar" }, "en");
   else if (a === "estudiar") doAction("activity", { activity: "estudiar" }, "es");

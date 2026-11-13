@@ -1,0 +1,18 @@
+# docker-compose.cloudflared.yml — incluye cloudflared como servicio
+# Uso: docker compose -f docker-compose.yml -f deploy/docker-compose.prod.yml -f deploy/docker-compose.cloudflared.yml up -d
+#
+# Requiere: crear el tunnel primero (cloudflared tunnel create chaco-demo)
+# y colocar las credenciales en ./deploy/cloudflared/
+
+services:
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: chaco-tunnel
+    restart: unless-stopped
+    command: tunnel --config /etc/cloudflared/config.yml run
+    volumes:
+      - ./deploy/cloudflared:/etc/cloudflared:ro
+    depends_on:
+      - api
+    networks:
+      - default

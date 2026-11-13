@@ -1,0 +1,11 @@
+# config.yml — plantilla para Cloudflare Tunnel
+# Copiar a ~/.cloudflared/config.yml (Linux) o C:\Users\<usuario>\.cloudflared\config.yml (Windows)
+# Reemplazar <TUNNEL_ID> y <CREDENTIALS_FILE> con los valores reales.
+
+tunnel: <TUNNEL_ID>
+credentials-file: <CREDENTIALS_FILE>
+
+ingress:
+  - hostname: demo.eibrapp.com.py
+    service: http://host.docker.internal:8010
+  - service: http_status:404

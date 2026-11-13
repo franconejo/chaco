@@ -1,47 +1,96 @@
-# Deploy de Chaco en demo.eibrapp.com.py
+# Deploy de Chaco en demo.eibrapp.com.py con Cloudflare Tunnel
 
-## Requisitos del servidor
+Sin reverse proxy (Caddy/nginx): Cloudflare Tunnel expone el contenedor
+directamente con HTTPS automático.
 
-- Linux (Ubuntu 22.04+ recomendado) o Windows Server
-- Docker + Docker Compose
-- Caddy (o nginx) como reverse proxy
-- Dominio `demo.eibrapp.com.py` apuntando al servidor (registro A)
+## Arquitectura
+
+```
+Internet → Cloudflare → cloudflared tunnel → localhost:8010 → Docker (api)
+```
 
 ## Pasos
 
-### 1. Clonar el repositorio
+### 1. Instalar cloudflared (si no está)
+
+**Windows:**
+```powershell
+winget install Cloudflare.cloudflared
+```
+
+**Linux (Ubuntu/Debian):**
+```bash
+curl -L https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64 -o /usr/local/bin/cloudflared
+chmod +x /usr/local/bin/cloudflared
+```
+
+### 2. Autenticar con Cloudflare
 
 ```bash
-git clone https://github.com/tu-usuario/chaco.git /opt/chaco
-cd /opt/chaco
+cloudflared tunnel login
 ```
+Esto abre el navegador para autorizar. Seleccioná el dominio `eibrapp.com.py`.
 
-### 2. Configurar variables de entorno
-
-Crear `.env` en la raíz:
-
-```
-DATABASE_URL=postgresql+psycopg://chaco:CONTRASEÑA_SEGURA@db:5432/chaco
-CORS_ORIGINS=["https://demo.eibrapp.com.py"]
-```
-
-### 3. Levantar los contenedores
+### 3. Crear el tunnel
 
 ```bash
+cloudflared tunnel create chaco-demo
+```
+Anota el **Tunnel ID** que devuelve (algo como `a1b2c3d4-...`).
+
+### 4. Configurar el DNS en Cloudflare
+
+```bash
+cloudflared tunnel route dns chaco-demo demo.eibrapp.com.py
+```
+Esto crea automáticamente el registro CNAME en Cloudflare.
+
+### 5. Crear el archivo de configuración
+
+Crear `~/.cloudflared/config.yml` (Linux) o `C:\Users\<usuario>\.cloudflared\config.yml` (Windows):
+
+```yaml
+tunnel: <TUNNEL_ID>
+credentials-file: <ruta_al_json_de_credenciales>
+
+ingress:
+  - hostname: demo.eibrapp.com.py
+    service: http://localhost:8010
+  - service: http_status:404
+```
+
+El archivo de credenciales está en `~/.cloudflared/<TUNNEL_ID>.json`.
+
+### 6. Levantar los contenedores de Chaco
+
+```bash
+cd /opt/chaco  # o la ruta donde clonaste el repo
 docker compose -f docker-compose.yml -f deploy/docker-compose.prod.yml up -d --build
 ```
 
-### 4. Configurar Caddy
+### 7. Iniciar el tunnel
 
-Copiar `deploy/Caddyfile` a `/etc/caddy/Caddyfile` (o agregar el bloque) y recargar:
-
+**Manual (para probar):**
 ```bash
-sudo caddy reload
+cloudflared tunnel run chaco-demo
 ```
 
-Caddy obtiene el certificado SSL automáticamente.
+**Como servicio (para que arranque con el sistema):**
 
-### 5. Verificar
+Linux:
+```bash
+sudo cloudflared service install
+sudo systemctl enable cloudflared
+sudo systemctl start cloudflared
+```
+
+Windows (PowerShell como admin):
+```powershell
+cloudflared service install
+# Luego iniciar desde Servicios de Windows
+```
+
+### 8. Verificar
 
 ```bash
 curl https://demo.eibrapp.com.py/health
@@ -51,14 +100,27 @@ curl https://demo.eibrapp.com.py/
 # (página web del juego)
 ```
 
-### 6. Ren'Py client
+## Actualizar
 
-El cliente Ren'Py ya está configurado con `API_BASE = "https://demo.eibrapp.com.py"`.
-Para distribuirlo, empaquetar la carpeta `renpy/` con Ren'Py (Build → Distribute).
+```bash
+cd /opt/chaco
+git pull
+docker compose -f docker-compose.yml -f deploy/docker-compose.prod.yml up -d --build
+```
+
+El tunnel no necesita reiniciarse: sigue apuntando a localhost:8010.
 
 ## Notas
 
-- La base de datos se persiste en el volumen `pgdata`. Hacer backup periódico.
-- Para actualizar: `git pull && docker compose -f docker-compose.yml -f deploy/docker-compose.prod.yml up -d --build`
-- Los retratos son provisorios (rectángulos de color). Reemplazar en `renpy/game/images/` y `web/` cuando haya arte definitivo.
-- El puerto 8010 solo escucha en localhost; Caddy es el único que lo expone al exterior.
+- **No necesitás Caddy ni nginx**: Cloudflare Tunnel maneja HTTPS, SSL y enrutamiento.
+- **No necesitás abrir puertos en el firewall**: el tunnel es una conexión saliente.
+- **La base de datos** se persiste en el volumen `pgdata` de Docker.
+- **Ren'Py client**: ya configurado con `API_BASE = "https://demo.eibrapp.com.py"`.
+- **CORS**: configurado en `docker-compose.prod.yml` para `https://demo.eibrapp.com.py`.
+
+## Troubleshooting
+
+- Si el tunnel no conecta: verificá que `cloudflared tunnel login` se hizo correctamente.
+- Si da 502: verificá que el contenedor de Chaco esté corriendo (`docker compose ps`).
+- Si da 404 en assets: verificá que el mount de StaticFiles funciona (el contenedor sirve `/`).
+- Logs del tunnel: `cloudflared tunnel info chaco-demo`

@@ -184,7 +184,14 @@ Invoke-RestMethod "$base/games/$id/pending"
 Las decisiones de diseño y lo que queda abierto están en
 `docs/DECISIONES.md`.
 
-## Deploy
+## Licencia
+
+Este proyecto está licenciado bajo la **GNU General Public License v3.0** (GPL-3.0).
+Ver el archivo [LICENSE](LICENSE) para el texto completo.
+
+En resumen: podés usar, modificar y distribuir el código, pero cualquier
+derivado debe publicarse bajo la misma licencia (copyleft). El contenido
+narrativo (eventos, personajes, diálogos) también queda bajo GPL-3.0.
 
 Ver `deploy/README.md` para instrucciones completas. Resumen:
 

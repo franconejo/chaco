@@ -86,8 +86,8 @@ EVENTS: dict[str, EventDef] = {
                     id="mostrar_acta",
                     text="Mostrar el acta falsificada y sostener la mirada",
                     effects={
-                        "suspicion": 2,
-                        "credibility": -3,
+                        "suspicion": 5,
+                        "credibility": -5,
                         "flags": ["mostro_acta"],
                     },
                 ),
@@ -95,8 +95,8 @@ EVENTS: dict[str, EventDef] = {
                     id="decir_que_la_tiene_en_casa",
                     text="Decir que el acta quedó en tu casa",
                     effects={
-                        "suspicion": 7,
-                        "credibility": -6,
+                        "suspicion": 15,
+                        "credibility": -8,
                         "flags": ["evadio_control"],
                     },
                 ),
@@ -147,6 +147,43 @@ EVENTS: dict[str, EventDef] = {
                     effects={"npc": {"juana": {"affection": -4}}},
                 ),
             ),
+        ),
+        EventDef(
+            id="investigacion",
+            title="Te están investigando",
+            text=(
+                "Nicanor te alcanza un sobre sin mirarte. Adentro hay una nota: el "
+                "cuartel abrió un expediente sobre vos. Preguntaron por tu familia, "
+                "por tu trabajo, por si alguien te cubre. «No es que yo quiera "
+                "decirte», murmura Nicanor, «pero el sargento Vera anduvo por tu "
+                "barrio preguntando.»"
+            ),
+            priority=8,
+            day_min=14,
+            any_flags=("mostro_acta", "evadio_control"),
+            periods=("manana", "tarde"),
+            effects={
+                "suspicion": 12,
+                "credibility": -5,
+                "flags": ["investigado"],
+            },
+        ),
+        EventDef(
+            id="orden_de_conscripcion",
+            title="Orden de conscripción",
+            text=(
+                "El teniente Ortega aparece en tu puerta con un papel firmado. «Tu "
+                "nombre salió en la lista. Mañana, a las seis, en el cuartel. No "
+                "hay apelación.» Te mira sin odio, sin alegría: es un trámite. "
+                "Don Ramón está en el umbral y esta vez no puede decir nada."
+            ),
+            priority=9,
+            day_min=20,
+            conditions={"suspicion": [30, 100]},
+            periods=("manana", "tarde"),
+            effects={
+                "flags": ["orden_conscripcion"],
+            },
         ),
         EventDef(
             id="control_de_documentos",
@@ -841,7 +878,7 @@ EVENTS: dict[str, EventDef] = {
             ),
             priority=10,
             day_min=40,
-            conditions={"suspicion": [60, 100]},
+            conditions={"suspicion": [35, 100]},
             effects={
                 "flags": ["final_conscripto"],
             },

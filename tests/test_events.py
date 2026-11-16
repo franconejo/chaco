@@ -41,8 +41,8 @@ def test_decision_y_cadena_de_dependencias():
     uid = s.pending[0]["uid"]
 
     actions.resolve_event(s, uid, "mostrar_acta")
-    assert s.identity["suspicion"] == 2
-    assert s.identity["credibility"] == 97
+    assert s.identity["suspicion"] == 5
+    assert s.identity["credibility"] == 95
     assert "mostro_acta" in s.flags
 
     # Resolver el aviso habilita la escena de Juana en el mismo lugar y horario.

@@ -39,7 +39,10 @@ renpy/
 ├── game/
 │   ├── script.rpy       # Flujo principal y bucle del día
 │   ├── options.rpy      # Configuración de la ventana
-│   └── api_client.py    # Puente HTTP (urllib + invoke_in_thread)
+│   ├── api_client.py    # Puente HTTP (urllib + threading)
+│   └── images/
+│       ├── bg/          # Fondos de los lugares (11 imágenes)
+│       └── *.png        # Retratos provisorios (12 personajes)
 └── README.md
 ```
 

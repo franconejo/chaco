@@ -54,7 +54,17 @@ init python:
         refresh_state()
         return r
 
-    def show_result(r):
+    def show_location_bg():
+        loc = game_state["location"] if game_state else "casa"
+        bg_map = {
+            "casa": "bg_casa", "almacen": "bg_almacen", "taller": "bg_taller",
+            "plaza": "bg_plaza", "mercado": "bg_mercado", "iglesia": "bg_iglesia",
+            "pozo": "bg_rio", "rio": "bg_rio", "fundicion": "bg_fundicion",
+            "salto": "bg_salto", "cuartel": "bg_cuartel", "estacion": "bg_estacion",
+        }
+        bg = bg_map.get(loc, "bg_casa")
+        renpy.scene()
+        renpy.show(bg)
         if not r:
             renpy.say(narrador, "Sin respuesta del servidor.")
             return
@@ -69,7 +79,19 @@ init python:
             renpy.say(narrador, "¡Evento: {}!".format(e.get("title", "")))
 
 
-# ---------- personajes ----------
+# ---------- imágenes de fondo ----------
+
+image bg_plaza = "images/bg/bg_plaza.png"
+image bg_almacen = "images/bg/bg_almacen.png"
+image bg_casa = "images/bg/bg_casa.png"
+image bg_iglesia = "images/bg/bg_iglesia.png"
+image bg_fundicion = "images/bg/bg_fundicion.png"
+image bg_rio = "images/bg/bg_rio.png"
+image bg_taller = "images/bg/bg_taller.png"
+image bg_mercado = "images/bg/bg_mercado.png"
+image bg_cuartel = "images/bg/bg_cuartel.png"
+image bg_estacion = "images/bg/bg_estacion.png"
+image bg_salto = "images/bg/bg_salto.png"
 
 define juana = Character("Juana", color="#c9a063")
 define celia = Character("Celia", color="#a89880")
@@ -149,14 +171,18 @@ label game_loop:
 
     # Muerte
     if game_state and "muerto" in game_state.get("flags", []):
+        $ show_location_bg()
         "El cuerpo no aguantó más. Fin de la partida."
         return
 
     # Finales
     if game_state and any(f.startswith("final_") for f in game_state.get("flags", [])):
+        $ show_location_bg()
         $ finales = [f for f in game_state["flags"] if f.startswith("final_")]
         "Has llegado a un final: [finales[0]]."
         return
+
+    $ show_location_bg()
 
     menu:
         "¿Qué hacés?"
@@ -241,6 +267,7 @@ label game_loop:
 label scene_pending:
     show screen hud
     $ ev = pending_scene
+    $ show_location_bg()
     $ title = ev.get("title", "Escena")
     $ text = ev.get("text", "")
     $ choices = ev.get("choices", [])

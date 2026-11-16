@@ -1,33 +1,33 @@
-2026-11-13 17:59:01 UTC
+2026-11-16 11:37:14 UTC
 Windows-11-10.0.26200-SP0
 Ren'Py 8.5.3.26051504
 
-Early init took 44 ms
-Loading error handling took 15 ms
-Loading script took 84 ms
-Loading save slot metadata took 7 ms
+Early init took 54 ms
+Loading error handling took 48 ms
+Loading script took 1128 ms
+Loading save slot metadata took 68 ms
 Loading persistent took 0 ms
-Running init code took 28 ms
-Loading analysis data took 2 ms
-Analyze and compile ATL took 1 ms
-Reloading save slot metadata took 3 ms
+Running init code took 153 ms
+Loading analysis data took 10 ms
+Analyze and compile ATL took 0 ms
+Reloading save slot metadata took 0 ms
 Backing up script files to 'C:\\Users\\User 09\\AppData\\Roaming/RenPy/backups\\renpy':
-Dump and make backups took 2 ms
+Dump and make backups took 7 ms
 Cleaning cache took 0 ms
-Making clean stores took 1 ms
-Initial gc took 28 ms
+Making clean stores took 0 ms
+Initial gc took 19 ms
 DPI scale factor: 1.000000
 nvdrs: Loaded, about to disable thread optimizations.
 nvdrs: b"Couldn't load nvlib." (can be ignored)
-Creating interface object took 3 ms
+Creating interface object took 33 ms
 Init translation took 0 ms
 Cleaning stores took 0 ms
-Load screen analysis took 0 ms
-Analyze screens took 7 ms
-Save screen analysis took 10 ms
-Save pyanalysis took 0 ms
-Save bytecode took 19 ms
-﻿Ren'Py 8.5.3.26051504 lint report, generated at: Fri Nov 13 14:59:01 2026
+Load screen analysis took 9 ms
+Analyze screens took 10 ms
+Save screen analysis took 7 ms
+Save pyanalysis took 2 ms
+Save bytecode took 21 ms
+﻿Ren'Py 8.5.3.26051504 lint report, generated at: Mon Nov 16 08:37:15 2026
 It is advised to set config.check_conflicting_properties to True.
 
 
@@ -36,7 +36,7 @@ Statistics:
 The game contains 15 dialogue blocks, containing 83 words and 462 characters,
 for an average of 5.5 words and 31 characters per block.
 
-The game contains 2 menus, 0 images, and 1 screens.
+The game contains 2 menus, 11 images, and 1 screens.
 
 
 Lint is not a substitute for thorough testing. Remember to update Ren'Py

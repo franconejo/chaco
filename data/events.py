@@ -883,6 +883,40 @@ EVENTS: dict[str, EventDef] = {
             },
         ),
         EventDef(
+            id="campo_jordan",
+            title="Campo Jord?n",
+            text=(
+                "Llega la noticia: en Campo Jord?n se pele? cuerpo a cuerpo. Los "
+                "diarios hablan de un fort?n que cambi? de manos otra vez. En el "
+                "barrio, los que tienen parientes en el frente no duermen. Do?a "
+                "Mercedes dice que esta semana salieron cuatro cartas y ninguna "
+                "volvi?."
+            ),
+            priority=6,
+            day_min=90,
+            effects={
+                "flags": ["campo_jordan"],
+                "needs": {"fatigue": 4},
+                "attributes": {"reputation": 1},
+            },
+        ),
+        EventDef(
+            id="nanawa",
+            title="Nanawa",
+            text=(
+                "El diario trae una lista larga. Nanawa fue un infierno, dicen. "
+                "Los nombres se leen en la plaza y alguien llora. El teniente "
+                "Ortega dice que la guerra va a durar m?s de lo que todos creen, "
+                "y que los mozos del pueblo van a tener que ir igual."
+            ),
+            priority=7,
+            day_min=120,
+            effects={
+                "flags": ["nanawa"],
+                "needs": {"fatigue": 6, "health": -2},
+            },
+        ),
+        EventDef(
             id="muerte",
             title="Fin de la partida",
             text=(
